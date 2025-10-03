@@ -20,16 +20,39 @@ class Player(CircleShape):
         c = self.position - forward * self.radius + right
         return [a, b, c]
     
+    # player rotation method
     def rotate(self, direction, dt):
         if direction == "left":
             self.rotation -= PLAYER_TURN_SPEED * dt
         elif direction == "right":
             self.rotation += PLAYER_TURN_SPEED * dt
 
+    # keyboard input handling
     def update(self, dt):
         keys = pygame.key.get_pressed()
 
+        if keys[pygame.K_w]:
+            self.move(dt)
+        if keys[pygame.K_s]:
+            self.move(-dt)
         if keys[pygame.K_a]:
-            self.rotate("left", dt)
+            self.rotate(-dt)
         if keys[pygame.K_d]:
-            self.rotate("right", dt)
+            self.rotate(dt)
+    
+    def rotate(self, dt):
+        self.rotation += PLAYER_TURN_SPEED * dt
+    
+    def move(self, dt):
+        forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        self.position += forward * PLAYER_SPEED * dt
+        # screen wrapping
+        if self.position.x < 0:
+            self.position.x = SCREEN_WIDTH
+        elif self.position.x > SCREEN_WIDTH:
+            self.position.x = 0
+        if self.position.y < 0:
+            self.position.y = SCREEN_HEIGHT
+        elif self.position.y > SCREEN_HEIGHT:
+            self.position.y = 0
+    
